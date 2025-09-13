@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root { height: 100%; }
+
+:root {
+  /* Light theme (default) */
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --elev-1: #f1f5f9;
+  --text: #0f172a;
+  --muted: #475569;
+  --border: #e2e8f0;
+  --accent: #4f46e5; /* indigo-600 */
+  /* Gradients / orbs */
+  --g1: rgba(99, 102, 241, 0.12);
+  --g2: rgba(139, 92, 246, 0.10);
+  --g3from: #f8fafc;
+  --g3to: #eef2ff;
+  --orb1: rgba(99, 102, 241, 0.30);
+  --orb2: rgba(236, 72, 153, 0.18);
+  --cone1: rgba(139, 92, 246, 0.18);
+  /* Glass */
+  --glass: rgba(255, 255, 255, 0.85);
+  --card-border: rgba(15, 23, 42, 0.08);
+  --shadow: 0 10px 30px rgba(2, 6, 23, 0.12);
+  color-scheme: light;
+}
+
+.dark {
+  /* Dark theme overrides */
+  --bg: #0b0f14;
+  --surface: #10151c;
+  --elev-1: #111827;
+  --text: #e5e7eb;
+  --muted: #9aa4b2;
+  --border: #1f2937;
+  --accent: #6366f1; /* indigo-500 */
+  --g1: rgba(99, 102, 241, 0.16);
+  --g2: rgba(139, 92, 246, 0.10);
+  --g3from: #0b0f14;
+  --g3to: #0f172a;
+  --orb1: rgba(99, 102, 241, 0.24);
+  --orb2: rgba(236, 72, 153, 0.12);
+  --cone1: rgba(139, 92, 246, 0.12);
+  --glass: rgba(17, 24, 39, 0.55);
+  --card-border: rgba(255, 255, 255, 0.06);
+  --shadow: 0 20px 40px rgba(2, 6, 23, 0.5);
+  color-scheme: dark;
+}
+
+body {
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  background:
+    linear-gradient(180deg, var(--g3from) 0%, var(--g3to) 100%);
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* Extra glow layers to avoid "garis lurus" look */
+body::before {
+  content: '';
+  position: fixed;
+  inset: -25% -25% -25% -25%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(800px 600px at 10% -10%, var(--orb1) 0%, transparent 60%),
+    radial-gradient(900px 700px at 110% 0%, var(--orb2) 0%, transparent 60%),
+    conic-gradient(from 200deg at 60% -10%, var(--cone1) 0%, transparent 25%),
+    conic-gradient(from 120deg at -10% 30%, var(--cone1) 0%, transparent 35%);
+  filter: blur(40px) saturate(120%);
+}
+
+a { color: var(--accent); }
+
+/* Components */
+.btn {
+  @apply px-4 py-2 rounded-full font-medium disabled:opacity-50 transition-colors;
+  background: linear-gradient(#0000, #0000) padding-box,
+              linear-gradient(90deg, #6366f1, #8b5cf6) border-box;
+  border: 1px solid transparent;
+  color: var(--text);
+  background-color: rgba(255,255,255,0.04);
+}
+.btn:hover { filter: brightness(1.05); }
+.btn:focus { @apply outline-none ring-2 ring-indigo-400; }
+
+.input {
+  @apply rounded-xl w-full px-3 py-2 bg-transparent outline-none;
+  background: linear-gradient(#0000, #0000) padding-box,
+              linear-gradient(180deg, rgba(99,102,241,0.25), rgba(139,92,246,0.15)) border-box;
+  border: 1px solid transparent;
+  color: var(--text);
+}
+.input::placeholder { color: var(--muted); }
+
+/* Improve select visuals across themes */
+select.input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23a3aed0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  padding-right: 36px;
+}
+@media (prefers-color-scheme: dark) {
+  .dark select.input { 
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23cbd5e1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  }
+}
+.input:focus { @apply ring-2 ring-indigo-500; border-color: transparent; }
+
+.label { @apply text-sm font-medium; color: var(--muted); }
+
+.card {
+  @apply rounded-2xl p-4 shadow;
+  background: linear-gradient(#0000, #0000) padding-box,
+              linear-gradient(180deg, rgba(99,102,241,0.25), rgba(139,92,246,0.15)) border-box;
+  border: 1px solid transparent;
+  background-color: var(--glass);
+  backdrop-filter: blur(12px) saturate(140%);
+  box-shadow: var(--shadow);
+}
+
+/* Utility helpers */
+.border-muted { border-color: var(--border); }
+.text-muted { color: var(--muted); }
+
+/* Header divider gradient */
+.header-gradient {
+  position: relative;
+}
+.header-gradient::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: -1px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99,102,241,0.6), rgba(139,92,246,0.6), transparent);
+}

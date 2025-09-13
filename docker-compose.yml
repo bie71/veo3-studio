@@ -1,0 +1,24 @@
+version: '3.9'
+services:
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    environment:
+      - PORT=5174
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    ports:
+      - "5174:5174"
+    volumes:
+      - ./jobs:/app/server/jobs
+  web:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    environment:
+      - VITE_API_BASE=http://server:5174/api/veo3
+    ports:
+      - "5173:5173"
+    depends_on:
+      - server
+
