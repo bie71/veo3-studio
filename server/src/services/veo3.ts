@@ -13,6 +13,17 @@ export async function proxyGenerate(model: string, body: any, apiKey?: string): 
   return res;
 }
 
+export async function listModels(apiKey?: string): Promise<any> {
+  const key = (apiKey && apiKey.trim()) || GEMINI_API_KEY;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models?key=${encodeURIComponent(key)}`;
+  const res = await fetch(url, { method: 'GET' });
+  if (!res.ok) {
+    const text = await res.text().catch(()=> '');
+    throw new Error(`ListModels failed: ${res.status} ${text}`);
+  }
+  return res.json();
+}
+
 export function buildGenerateBodyFromText(
   prompt: string,
   referenceImages?: ReferenceImage[],
@@ -39,16 +50,7 @@ export function buildGenerateBodyFromText(
     topP: 0.9,
     topK: 32,
   };
-  // Vendor-specific fields often go in "tools" or "safetySettings"; keep generic
-  body.toolConfig = {
-    // Pass options so backend can interpret where applicable
-    removeAudio: opts?.removeAudio ?? false,
-    durationSeconds: opts?.durationSeconds,
-    aspectRatio: opts?.aspectRatio,
-    resolution: opts?.resolution,
-    stylePreset: opts?.stylePreset,
-    styleStrength: opts?.styleStrength,
-    negativePrompt: opts?.negativePrompt,
-  } as any;
+  // Avoid sending non-standard fields like removeAudio/aspectRatio to the API.
+  // These options are already embedded into the textual prompt to guide generation.
   return body;
 }

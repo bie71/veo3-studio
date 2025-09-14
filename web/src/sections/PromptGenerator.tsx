@@ -72,15 +72,42 @@ export function PromptGenerator() {
           </div>
           {characters.map(c=> (
             <div key={c.id} className="border border-[var(--border)] rounded p-3 grid md:grid-cols-2 gap-2">
-              <input className="input" placeholder="Name" value={c.name} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,name:e.target.value}:x))} />
-              <input className="input" placeholder="Ethnicity" value={c.ethnicity} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,ethnicity:e.target.value}:x))} />
-              <input className="input" placeholder="Gender" value={c.gender} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,gender:e.target.value}:x))} />
-              <input className="input" placeholder="Age" value={c.age} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,age:e.target.value}:x))} />
-              <input className="input" placeholder="Outfit" value={c.outfit} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,outfit:e.target.value}:x))} />
-              <input className="input" placeholder="Hair" value={c.hair} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,hair:e.target.value}:x))} />
-              <input className="input" placeholder="Voice" value={c.voice} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,voice:e.target.value}:x))} />
-              <input className="input" placeholder="Description" value={c.description} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,description:e.target.value}:x))} />
-              <input className="input md:col-span-2" placeholder="Action" value={c.action} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,action:e.target.value}:x))} />
+              <div>
+                <label htmlFor={`char-${c.id}-name`} className="label">Name</label>
+                <input id={`char-${c.id}-name`} className="input" placeholder="e.g., Rina" value={c.name} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,name:e.target.value}:x))} />
+              </div>
+              <div>
+                <label htmlFor={`char-${c.id}-eth`} className="label">Ethnicity</label>
+                <input id={`char-${c.id}-eth`} className="input" placeholder="e.g., Indonesian" value={c.ethnicity} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,ethnicity:e.target.value}:x))} />
+              </div>
+              <div>
+                <label htmlFor={`char-${c.id}-gender`} className="label">Gender</label>
+                <input id={`char-${c.id}-gender`} className="input" placeholder="e.g., F/M" value={c.gender} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,gender:e.target.value}:x))} />
+              </div>
+              <div>
+                <label htmlFor={`char-${c.id}-age`} className="label">Age</label>
+                <input id={`char-${c.id}-age`} className="input" placeholder="e.g., 25" value={c.age} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,age:e.target.value}:x))} />
+              </div>
+              <div>
+                <label htmlFor={`char-${c.id}-outfit`} className="label">Outfit</label>
+                <input id={`char-${c.id}-outfit`} className="input" placeholder="e.g., casual" value={c.outfit} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,outfit:e.target.value}:x))} />
+              </div>
+              <div>
+                <label htmlFor={`char-${c.id}-hair`} className="label">Hair</label>
+                <input id={`char-${c.id}-hair`} className="input" placeholder="e.g., short" value={c.hair} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,hair:e.target.value}:x))} />
+              </div>
+              <div>
+                <label htmlFor={`char-${c.id}-voice`} className="label">Voice</label>
+                <input id={`char-${c.id}-voice`} className="input" placeholder="e.g., id-ID-Standard-A" value={c.voice} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,voice:e.target.value}:x))} />
+              </div>
+              <div>
+                <label htmlFor={`char-${c.id}-desc`} className="label">Description</label>
+                <input id={`char-${c.id}-desc`} className="input" placeholder="Character backstory/traits" value={c.description} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,description:e.target.value}:x))} />
+              </div>
+              <div className="md:col-span-2">
+                <label htmlFor={`char-${c.id}-action`} className="label">Action</label>
+                <input id={`char-${c.id}-action`} className="input" placeholder="What are they doing/saying" value={c.action} onChange={e=>setCharacters(cs=>cs.map(x=>x.id===c.id?{...x,action:e.target.value}:x))} />
+              </div>
               <button className="btn bg-red-600 hover:bg-red-700 md:col-span-2" onClick={()=>setCharacters(cs=>cs.filter(x=>x.id!==c.id))}>Remove</button>
             </div>
           ))}
@@ -92,19 +119,37 @@ export function PromptGenerator() {
           </div>
           {dialogs.map(d=> (
             <div key={d.id} className="border border-[var(--border)] rounded p-3 grid md:grid-cols-3 gap-2 items-center">
-              <select className="input" value={d.characterId} onChange={e=>setDialogs(ds=>ds.map(x=>x.id===d.id?{...x,characterId:Number(e.target.value)}:x))}>
-                {characters.map(c=> <option key={c.id} value={c.id}>{c.name}</option>)}
-              </select>
-              <input className="input md:col-span-2" placeholder="Dialog" value={d.text} onChange={e=>setDialogs(ds=>ds.map(x=>x.id===d.id?{...x,text:e.target.value}:x))} />
+              <div>
+                <label htmlFor={`dialog-${d.id}-char`} className="label">Character</label>
+                <select id={`dialog-${d.id}-char`} className="input" value={d.characterId} onChange={e=>setDialogs(ds=>ds.map(x=>x.id===d.id?{...x,characterId:Number(e.target.value)}:x))}>
+                  {characters.map(c=> <option key={c.id} value={c.id}>{c.name}</option>)}
+                </select>
+              </div>
+              <div className="md:col-span-2">
+                <label htmlFor={`dialog-${d.id}-text`} className="label">Dialog Text</label>
+                <input id={`dialog-${d.id}-text`} className="input" placeholder="What they say" value={d.text} onChange={e=>setDialogs(ds=>ds.map(x=>x.id===d.id?{...x,text:e.target.value}:x))} />
+              </div>
               <button className="btn bg-red-600 hover:bg-red-700 md:col-span-3" onClick={()=>setDialogs(ds=>ds.filter(x=>x.id!==d.id))}>Remove</button>
             </div>
           ))}
         </div>
         <div className="card grid md:grid-cols-2 gap-2">
-          <input className="input" placeholder="Environment" value={environment} onChange={e=>setEnvironment(e.target.value)} />
-          <input className="input" placeholder="Lighting" value={lighting} onChange={e=>setLighting(e.target.value)} />
-          <input className="input" placeholder="Angles" value={angles} onChange={e=>setAngles(e.target.value)} />
-          <input className="input" placeholder="Shooting styles" value={styles} onChange={e=>setStyles(e.target.value)} />
+          <div>
+            <label htmlFor="env" className="label">Environment</label>
+            <input id="env" className="input" placeholder="e.g., Jakarta apartment, morning light" value={environment} onChange={e=>setEnvironment(e.target.value)} />
+          </div>
+          <div>
+            <label htmlFor="lighting" className="label">Lighting</label>
+            <input id="lighting" className="input" placeholder="e.g., soft daylight ~5200K" value={lighting} onChange={e=>setLighting(e.target.value)} />
+          </div>
+          <div>
+            <label htmlFor="angles" className="label">Angles</label>
+            <input id="angles" className="input" placeholder="e.g., 35mm, eye-level, push-in" value={angles} onChange={e=>setAngles(e.target.value)} />
+          </div>
+          <div>
+            <label htmlFor="styles" className="label">Shooting Styles</label>
+            <input id="styles" className="input" placeholder="e.g., clean, modern" value={styles} onChange={e=>setStyles(e.target.value)} />
+          </div>
           <div>
             <label className="label">Aspect</label>
             <select className="input" value={aspect} onChange={e=>setAspect(e.target.value as Aspect)}>

@@ -29,7 +29,7 @@ export function StoryboardBuilder() {
   const [styleStrength, setStyleStrength] = useState(50)
   const [negativePrompt, setNegativePrompt] = useState('logos, brands, watermark, text')
   const [fps, setFps] = useState(30)
-  const [model, setModel] = useState('veo-3.0')
+  const [model, setModel] = useState('veo-3.0-fast-generate-001')
 
   const [location, setLocation] = useState(LOCATIONS[0])
   const [lighting, setLighting] = useState(LIGHTING[0])

@@ -4,16 +4,26 @@ import { buildCinematicPrompt } from "../templates/cinematic.js";
 import { extractLastFrame, concatVideos, getDims } from "../services/ffmpeg.js";
 import { ensureJob, jobsRoot, lastFramePath, outputPath, segPath, streamToFile, writeBase64DataUrl } from "../services/storage.js";
 import { log, err } from "../utils/logger.js";
-import { proxyGenerate, buildGenerateBodyFromText } from "../services/veo3.js";
+import { proxyGenerate, buildGenerateBodyFromText, listModels } from "../services/veo3.js";
 import type { StoryboardRequest, StoryboardResponse, SegmentResult } from "../types/storyboard.js";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 
 export const veo3Router = Router();
 
+function normalizeModel(input?: string): string {
+  const m = (input || '').trim();
+  if (!m) return 'veo-3.0-fast-generate-001';
+  // Map legacy aliases to current model ids
+  if (m === 'veo-3.0' || m === 'veo-3') return 'veo-3.0-generate-001';
+  if (m === 'veo-3-fast' || m === 'veo-3.0-fast') return 'veo-3.0-fast-generate-001';
+  if (m === 'veo-2.0' || m === 'veo-2') return 'veo-2.0-generate-001';
+  return m;
+}
+
 veo3Router.post("/generate", async (req: Request, res: Response) => {
   try {
-    const model = (req.query.model as string) || "veo-3.0";
+    const model = normalizeModel(req.query.model as string);
     const apiKey = (req.header('x-gemini-key') as string) || undefined;
     const body = req.body;
 
@@ -46,6 +56,15 @@ veo3Router.post("/generate", async (req: Request, res: Response) => {
 
     const upstream = await proxyGenerate(model, payload, apiKey);
     const ct = upstream.headers.get("content-type") || "";
+    // Intercept NOT_FOUND to provide a clearer message
+    if (upstream.status === 404 && ct.includes('application/json')) {
+      const errJson = await upstream.json().catch(()=>({}));
+      return res.status(404).json({
+        ok: false,
+        message: `Model \"${model}\" is not available for your API key or does not support generateContent in v1beta. Use /api/veo3/models to see accessible models or update your key (Veo access required).`,
+        error: errJson,
+      });
+    }
     res.status(upstream.status);
     res.setHeader("Content-Type", ct);
     res.setHeader("Cache-Control", "no-store");
@@ -53,8 +72,6 @@ veo3Router.post("/generate", async (req: Request, res: Response) => {
       const data = await upstream.text();
       res.send(data);
     } else {
-      // Assume binary/MP4 stream
-      // Pipe response
       (upstream.body as any).pipe(res);
     }
   } catch (e: any) {
@@ -80,7 +97,7 @@ veo3Router.post("/frame-extract", async (req: Request, res: Response) => {
 veo3Router.post("/segments", async (req: Request, res: Response) => {
   const body = req.body as StoryboardRequest;
   const apiKey = (req.header('x-gemini-key') as string) || undefined;
-  const model = body.model || "veo-3.0";
+  const model = normalizeModel(body.model);
   const jobId = body.jobId || `job_${Date.now()}`;
   const fps = body.global.fps || 30;
   await ensureJob(jobId);
@@ -162,6 +179,18 @@ veo3Router.post("/segments", async (req: Request, res: Response) => {
 
   const resp: StoryboardResponse = { results };
   res.json({ jobId, ...resp });
+});
+
+// List models accessible to the provided API key
+veo3Router.get('/models', async (req: Request, res: Response) => {
+  try {
+    const apiKey = (req.header('x-gemini-key') as string) || undefined;
+    const data = await listModels(apiKey);
+    res.json(data);
+  } catch (e: any) {
+    err('models error', e);
+    res.status(500).json({ ok: false, message: e?.message || 'List models failed' });
+  }
 });
 
 veo3Router.post("/concat", async (req: Request, res: Response) => {

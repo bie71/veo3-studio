@@ -14,7 +14,7 @@ export function Studio() {
   const [resolution, setResolution] = useState<Resolution>('1080p')
   const [removeAudio, setRemoveAudio] = useState(false)
   const [durationSeconds, setDurationSeconds] = useState(5)
-  const [model, setModel] = useState('veo-3.0')
+  const [model, setModel] = useState('veo-3.0-fast-generate-001')
   const [stylePreset, setStylePreset] = useState<StylePreset>('realistic')
   const [styleStrength, setStyleStrength] = useState(50)
   const [negativePrompt, setNegativePrompt] = useState('logos, brands, watermark, text')
